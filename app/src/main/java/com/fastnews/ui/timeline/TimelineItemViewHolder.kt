@@ -50,8 +50,11 @@ class TimelineItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             val PREFIX_HTTP = "http"
 
             if (!TextUtils.isEmpty(it) && it!!.startsWith(PREFIX_HTTP)) {
+
+
                 Glide.with(view.item_timeline_thumbnail.context)
                     .load(it)
+                    .fitCenter()
                     .placeholder(ColorDrawable(Color.LTGRAY))
                     .error(ColorDrawable(Color.DKGRAY))
                     .into(view.item_timeline_thumbnail)

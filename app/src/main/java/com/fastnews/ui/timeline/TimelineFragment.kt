@@ -71,6 +71,8 @@ class TimelineFragment : Fragment() {
     }
 
     private fun buildTimeline() {
+
+
         adapter = TimelineAdapter { it, imageView ->
             onClickItem(it, imageView)
         }
