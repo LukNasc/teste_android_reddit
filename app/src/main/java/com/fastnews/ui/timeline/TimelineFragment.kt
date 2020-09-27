@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fastnews.R
 import com.fastnews.mechanism.VerifyNetworkInfo
 import com.fastnews.service.model.PostData
+import com.fastnews.service.model.PostDataChild
 import com.fastnews.ui.detail.DetailFragment.Companion.KEY_POST
 import com.fastnews.viewmodel.PostViewModel
 import kotlinx.android.synthetic.main.fragment_timeline.*
@@ -51,10 +52,13 @@ class TimelineFragment : Fragment() {
             if (VerifyNetworkInfo.isConnected(it!!)) {
                 hideNoConnectionState()
                 showProgress()
+                hidePagination()
                 fetchTimeline()
             } else {
                 hideProgress()
+                hidePagination()
                 showNoConnectionState()
+
 
                 state_without_conn_timeline.setOnClickListener {
                     verifyConnectionState()
@@ -82,11 +86,18 @@ class TimelineFragment : Fragment() {
         timeline_rv.adapter = adapter
     }
 
+    private fun buildTimelinePagination(){
+
+    }
+
     private fun fetchTimeline() {
-        viewModel.getPosts("", 50).observe(this, Observer<List<PostData>> { posts ->
-            posts.let {
+        viewModel.getPosts("", 6).observe(this, Observer<PostDataChild> { data ->
+            data.let {
+                val posts: MutableList<PostData> = mutableListOf()
+                data.children.map { postChildren -> posts.add(postChildren.data) }
                 adapter.setData(posts)
                 hideProgress()
+                showPagination()
                 showPosts()
             }
         })
@@ -94,6 +105,23 @@ class TimelineFragment : Fragment() {
 
     private fun showPosts() {
         timeline_rv.visibility = View.VISIBLE
+    }
+
+    /**
+     * @description Mostra na tela o  componente de paginação
+     * @author Lucas Nascimento
+     */
+    private fun showPagination(){
+        pagination_timeline.visibility = View.VISIBLE
+    }
+
+    /**
+     * @description Remove da tela o compenente de paginação
+     * @author Lucas Nascimento
+     */
+    private fun hidePagination(){
+        pagination_timeline.visibility = View.GONE
+
     }
 
     private fun showProgress() {
@@ -119,5 +147,9 @@ class TimelineFragment : Fragment() {
         var bundle = Bundle()
         bundle.putParcelable(KEY_POST, postData)
         findNavController().navigate(R.id.action_timeline_to_detail, bundle, null, extras)
+    }
+
+    private fun onClickNextPage(nextPage: Int){
+
     }
 }

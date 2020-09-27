@@ -8,23 +8,24 @@ import androidx.lifecycle.MutableLiveData
 import com.fastnews.mechanism.Coroutines
 import com.fastnews.repository.PostRepository
 import com.fastnews.service.model.PostData
+import com.fastnews.service.model.PostDataChild
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    private lateinit var posts: MutableLiveData<List<PostData>>
+    private lateinit var data: MutableLiveData<PostDataChild>
 
     @UiThread
-    fun getPosts(after: String, limit: Int): LiveData<List<PostData>> {
-            if (!::posts.isInitialized) {
-                posts = MutableLiveData()
+    fun getPosts(after: String, limit: Int): LiveData<PostDataChild> {
+            if (!::data.isInitialized) {
+                data = MutableLiveData()
 
                 Coroutines.ioThenMain({
                     PostRepository.getPosts(after, limit)
                 }) {
-                    posts.postValue(it)
+                    data.postValue(it)
                 }
             }
-        return posts
+        return data
     }
 
 }
